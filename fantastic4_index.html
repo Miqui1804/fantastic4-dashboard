@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fantastic 4 Robusto - Señales Semanales</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --border:#30363d; --text:#e6edf3;
+    --muted:#8b949e; --green:#3fb950; --red:#f85149; --accent:#58a6ff; --gold:#d29922;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    background:var(--bg); color:var(--text);
+  }
+  header{
+    padding:28px 24px 18px; border-bottom:1px solid var(--border);
+    display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:8px;
+  }
+  header h1{margin:0; font-size:22px;}
+  header .sub{color:var(--muted); font-size:13px;}
+  .updated{color:var(--muted); font-size:13px;}
+  main{padding:24px; max-width:1100px; margin:0 auto;}
+  h2.section-title{font-size:15px; margin:0 0 12px; color:var(--text);}
+  section{margin-bottom:32px;}
+  .note{
+    background:var(--panel); border:1px solid var(--border); border-radius:8px;
+    padding:14px 16px; font-size:13px; color:var(--muted); margin-bottom:20px; line-height:1.5;
+  }
+  .note b{color:var(--text);}
+  table{width:100%; border-collapse:collapse; background:var(--panel); border:1px solid var(--border); border-radius:8px; overflow:hidden;}
+  th,td{padding:10px 14px; text-align:right; border-bottom:1px solid var(--border); font-size:14px;}
+  th:nth-child(1),td:nth-child(1),th:nth-child(2),td:nth-child(2){text-align:left;}
+  th{color:var(--muted); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.03em;}
+  tr:last-child td{border-bottom:none;}
+  tr.top4{background:rgba(63,185,80,0.08);}
+  tr.top4 td:first-child{border-left:3px solid var(--green);}
+  tr:not(.top4) td:first-child{border-left:3px solid transparent;}
+  .badge{
+    display:inline-block; font-size:10px; font-weight:700; padding:2px 7px; border-radius:10px;
+    background:var(--green); color:#04230b; margin-left:6px; vertical-align:middle;
+  }
+  .badge.warn{background:var(--gold); color:#2b1d00;}
+  .badge.ok{background:var(--green); color:#04230b;}
+  .stale{color:var(--gold); font-size:11px;}
+  .rsc-pos{color:var(--green); font-weight:600;}
+  .rsc-neg{color:var(--red); font-weight:600;}
+  .pct-pos{color:var(--green); font-weight:600;}
+  .pct-neg{color:var(--red); font-weight:600;}
+  .ticker{font-weight:700; color:var(--accent); cursor:pointer; text-decoration:underline dotted;}
+  .ticker:hover{color:#79c0ff;}
+  footer{padding:24px; text-align:center; color:var(--muted); font-size:12px;}
+  @media(max-width:600px){
+    th,td{padding:8px 8px; font-size:12px;}
+    header{padding:20px 16px;} main{padding:16px;}
+  }
+  /* modal */
+  #tvOverlay{
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7);
+    z-index:1000; align-items:center; justify-content:center; padding:20px;
+  }
+  #tvOverlay.open{display:flex;}
+  #tvModal{
+    background:var(--panel); border:1px solid var(--border); border-radius:10px;
+    width:100%; max-width:980px; height:600px; display:flex; flex-direction:column; overflow:hidden;
+  }
+  #tvModalHeader{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px 16px; border-bottom:1px solid var(--border);
+  }
+  #tvModalHeader h3{margin:0; font-size:15px;}
+  #tvModalHeader span{color:var(--muted); font-size:12px;}
+  #tvClose{
+    background:none; border:none; color:var(--muted); font-size:20px; cursor:pointer; line-height:1;
+  }
+  #tvClose:hover{color:var(--text);}
+  #tv_chart_container{flex:1;}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Fantastic 4 Robusto</h1>
+    <div class="sub">Señales semanales · Sistema RATIO (momentum vs SP500)</div>
+  </div>
+  <div class="updated" id="updatedAt">Actualizado: 18/06/2026</div>
+</header>
+
+<main>
+
+  <section>
+    <h2 class="section-title">Cartera actual (posiciones abiertas)</h2>
+    <div class="note">
+      Resultado del <b>Backtest</b> de AmiBroker sobre <b>Fantastic 4 Robusto.afl</b> (01/01/2020 → última sesión).
+      El sistema mantiene <b>Numberheld = 4</b> posiciones simultáneas. A fecha de la última señal ninguna de las 4
+      posiciones abiertas muestra señal de venta activa, por lo que <b>la cartera está completa (4/4) y no hay huecos</b>
+      disponibles para nuevos candidatos.
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Ticker</th>
+          <th>Entrada</th>
+          <th>Precio entrada</th>
+          <th>Precio actual</th>
+          <th>% Resultado</th>
+          <th>Señal de venta</th>
+        </tr>
+      </thead>
+      <tbody id="portfolioBody"></tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2 class="section-title">Candidatos con señal de compra</h2>
+    <div class="note">
+      Lista de candidatos con señal de <b>compra activa</b> generada por el Explorer de AmiBroker sobre la fórmula
+      <b>Fantastic 4 Robusto.afl</b> (universo *Filter, último cierre semanal). Ordenado por <b>RSC Mansfield</b> descendente.
+      Las <span class="badge">TOP 4</span> filas son las que el sistema seleccionaría según su regla
+      <b>Numberheld = 4</b> si hubiera huecos en cartera (actualmente no hay, ver sección superior). El resto son
+      candidatos adicionales que también cumplen el filtro de compra. Haz clic en un ticker para ver su gráfico semanal
+      con WMA(30). Se excluyen automáticamente los valores con cotización desactualizada.
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Ticker</th>
+          <th>Nombre</th>
+          <th>Fecha señal</th>
+          <th>Precio</th>
+          <th>RSC</th>
+          <th>Distancia a la media</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </section>
+
+</main>
+
+<footer>
+  Generado automáticamente cada sábado a partir de AmiBroker · Fantastic 4 Robusto.afl
+</footer>
+
+<div id="tvOverlay">
+  <div id="tvModal">
+    <div id="tvModalHeader">
+      <div>
+        <h3 id="tvModalTitle">Ticker</h3>
+        <span>Gráfico semanal · WMA(30)</span>
+      </div>
+      <button id="tvClose" aria-label="Cerrar">&times;</button>
+    </div>
+    <div id="tv_chart_container"></div>
+  </div>
+</div>
+
+<script src="https://s3.tradingview.com/tv.js"></script>
+<script>
+// ---- Cartera actual (posiciones abiertas, vía Backtest) ----
+const PORTFOLIO = [
+  {t:"TER",  entry:"17/04/2026", pEntry:365.94, pNow:429.61, pct:17.40, sell:false},
+  {t:"GLW",  entry:"17/04/2026", pEntry:169.65, pNow:191.83, pct:13.07, sell:false},
+  {t:"GNRC", entry:"08/05/2026", pEntry:259.91, pNow:285.85, pct:9.98,  sell:false},
+  {t:"AKAM", entry:"15/05/2026", pEntry:149.00, pNow:125.03, pct:-16.09, sell:false},
+];
+
+const portfolioBody = document.getElementById('portfolioBody');
+PORTFOLIO.forEach(r => {
+  const tr = document.createElement('tr');
+  const pctClass = r.pct >= 0 ? 'pct-pos' : 'pct-neg';
+  tr.innerHTML = `
+    <td><span class="ticker" data-ticker="${r.t}">${r.t}</span></td>
+    <td>${r.entry}</td>
+    <td>${r.pEntry.toFixed(2)}</td>
+    <td>${r.pNow.toFixed(2)}</td>
+    <td class="${pctClass}">${r.pct >= 0 ? '+' : ''}${r.pct.toFixed(2)}%</td>
+    <td>${r.sell ? '<span class="badge warn">VENDER</span>' : '<span class="badge ok">Mantener</span>'}</td>
+  `;
+  portfolioBody.appendChild(tr);
+});
+
+// ---- Candidatos con señal de compra (vía Explorer) ----
+// Nota: los valores con cotización desactualizada (JNPR, CTLT, DOC) se excluyen automáticamente.
+const DATA = [
+  {t:"MRNA", n:"Moderna Inc (MRNA)", d:"18/06/2026", p:63.80, rsc:5.54, dist:23.13},
+  {t:"HWM",  n:"Howmet", d:"18/06/2026", p:278.20, rsc:1.71, dist:11.00},
+  {t:"APH",  n:"Amphenol", d:"18/06/2026", p:165.52, rsc:1.52, dist:14.76},
+  {t:"LUV",  n:"Southwest Airlines", d:"18/06/2026", p:48.08, rsc:1.40, dist:11.50},
+  {t:"AAL",  n:"American Airlines Group (AAL)", d:"18/06/2026", p:15.96, rsc:1.09, dist:17.47},
+  {t:"IEX",  n:"IDEX Corporation", d:"18/06/2026", p:225.44, rsc:1.00, dist:9.02},
+  {t:"GE",   n:"General Electric", d:"18/06/2026", p:358.80, rsc:0.92, dist:13.43},
+  {t:"UAL",  n:"United Airlines Holdings Inc (UAL)", d:"18/06/2026", p:118.60, rsc:0.70, dist:13.40},
+  {t:"WSM",  n:"Williams-Sonoma", d:"18/06/2026", p:227.05, rsc:0.68, dist:13.54},
+  {t:"SWK",  n:"Stanley Black Decker", d:"18/06/2026", p:86.84, rsc:0.45, dist:9.85},
+  {t:"NWL",  n:"Newell Brands Inc (NWL)", d:"18/06/2026", p:5.10, rsc:0.15, dist:18.77},
+  {t:"KMX",  n:"CarMax", d:"18/06/2026", p:52.03, rsc:-0.04, dist:16.67},
+  {t:"PKG",  n:"Packaging America", d:"18/06/2026", p:231.72, rsc:-0.12, dist:5.27},
+  {t:"CCL",  n:"Carnival Corp", d:"18/06/2026", p:31.01, rsc:-0.23, dist:10.11},
+  {t:"DRI",  n:"Darden Restaurants", d:"18/06/2026", p:213.99, rsc:-0.28, dist:5.50},
+  {t:"RCL",  n:"Royal Caribbean Cruises", d:"18/06/2026", p:314.13, rsc:-0.52, dist:9.69},
+  {t:"APO",  n:"Apollo Global Management A", d:"18/06/2026", p:137.58, rsc:-0.56, dist:8.70},
+];
+
+const tbody = document.getElementById('tbody');
+DATA.forEach((r, i) => {
+  const tr = document.createElement('tr');
+  if (i < 4) tr.className = 'top4';
+  const rscClass = r.rsc >= 0 ? 'rsc-pos' : 'rsc-neg';
+  tr.innerHTML = `
+    <td><span class="ticker" data-ticker="${r.t}">${r.t}</span>${i < 4 ? '<span class="badge">TOP 4</span>' : ''}</td>
+    <td>${r.n}</td>
+    <td>${r.d}</td>
+    <td>${r.p.toFixed(2)}</td>
+    <td class="${rscClass}">${r.rsc.toFixed(2)}</td>
+    <td>${r.dist.toFixed(2)}</td>
+  `;
+  tbody.appendChild(tr);
+});
+
+// ---- Modal TradingView (semanal + WMA 30) ----
+const tvOverlay = document.getElementById('tvOverlay');
+const tvTitle = document.getElementById('tvModalTitle');
+let tvWidget = null;
+
+function openTvModal(ticker){
+  tvTitle.textContent = ticker;
+  tvOverlay.classList.add('open');
+  document.getElementById('tv_chart_container').innerHTML = '';
+  tvWidget = new TradingView.widget({
+    autosize: true,
+    symbol: ticker,
+    interval: "W",
+    timezone: "Etc/UTC",
+    theme: "dark",
+    style: "1",
+    locale: "es",
+    toolbar_bg: "#161b22",
+    enable_publishing: false,
+    hide_top_toolbar: false,
+    withdateranges: true,
+    studies: [
+      {"id": "MAWeighted@tv-basicstudies", "inputs": {"length": 30}}
+    ],
+    container_id: "tv_chart_container"
+  });
+}
+
+function closeTvModal(){
+  tvOverlay.classList.remove('open');
+  document.getElementById('tv_chart_container').innerHTML = '';
+  tvWidget = null;
+}
+
+document.addEventListener('click', (e) => {
+  const el = e.target.closest('.ticker');
+  if (el) openTvModal(el.dataset.ticker);
+});
+document.getElementById('tvClose').addEventListener('click', closeTvModal);
+tvOverlay.addEventListener('click', (e) => { if (e.target === tvOverlay) closeTvModal(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeTvModal(); });
+</script>
+
+</body>
+</html>
