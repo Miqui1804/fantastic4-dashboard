@@ -131,7 +131,7 @@ background:none; border:none; color:var(--muted); font-size:20px; cursor:pointer
 <h1>Fantastic 4</h1>
 <div class="sub">Señales semanales</div>
 </div>
-<div class="updated" id="updatedAt">Actualizado: 27/06/2026</div>
+<div class="updated" id="updatedAt">Actualizado: 29/06/2026</div>
 </header>
 
 <main>
@@ -139,10 +139,10 @@ background:none; border:none; color:var(--muted); font-size:20px; cursor:pointer
 <section>
 <h2 class="section-title">Cartera actual (posiciones abiertas)</h2>
 <div class="note">
-Resultado del <b>Backtest</b> de AmiBroker sobre <b>Fantastic 4</b> (01/01/2020 → última sesión, 26/06/2026).
-El sistema mantiene <b>4</b> posiciones simultáneas. En la última señal, <b>AKAM</b> activa señal de venta y
-<b>se vende el lunes en apertura</b>; las otras tres posiciones se mantienen. Al cerrarse AKAM queda
-<b>1 hueco</b> en cartera, que el sistema cubre con el primer candidato válido (ver sección siguiente).
+Resultado del <b>Backtest</b> de AmiBroker sobre <b>Fantastic 4</b> (01/01/2020 → última sesión, 29/06/2026).
+El sistema mantiene <b>4</b> posiciones simultáneas. <b>AKAM</b> se vendió el <b>lunes 29/06 en apertura</b> y el
+sistema cubrió el hueco con <b>OKTA</b>, que fue la que activó señal de compra (ruptura del ratio). Las cuatro
+posiciones se mantienen, sin señales de venta activas: <b>cartera completa 4/4</b>.
 </div>
 <table>
 <thead>
@@ -160,15 +160,14 @@ El sistema mantiene <b>4</b> posiciones simultáneas. En la última señal, <b>A
 </section>
 
 <section>
-<h2 class="section-title">Candidatos con señal de compra</h2>
+<h2 class="section-title">Ranking por RSC Mansfield (Explorer)</h2>
 <div class="note">
-Lista de candidatos generada por el Explorer de AmiBroker sobre la fórmula <b>Fantastic 4</b>
-(universo *Filter, último cierre semanal 26/06/2026), ordenada por <b>RSC Mansfield</b> descendente.
-Con la salida de AKAM hay <b>1 hueco</b> en cartera. El sistema lo cubre con el candidato de mayor RSC cuya
-<b>distancia a la media de 30 semanas no supere el máximo</b> (dismax − 5 = <b>33%</b>). <b>MU</b> e <b>INTC</b>
-tienen mayor RSC pero superan esa distancia máxima, por lo que no generan señal de compra; el primer candidato
-válido es <span class="badge buy">COMPRA</span> <b>WDC</b>, que entra en lugar de AKAM. Haz clic en un ticker
-para ver su gráfico semanal con WMA(30).
+Listado del universo generado por el Explorer de AmiBroker (<b>Filter = 1</b>), ordenado por <b>RSC Mansfield</b>
+descendente sobre el cierre del 26/06/2026. <b>Es un ranking de fuerza relativa, no la lista de compras</b>: para
+comprar, el sistema exige además una <b>ruptura del ratio acción/SP500</b> (máximo Donchian) y <b>distancia a la
+media de 30 semanas &lt; 33%</b> (dismax − 5). Los valores en gris (MU, INTC, MRVL, DD) superan esa distancia
+máxima. Con la salida de AKAM, el sistema compró <b>OKTA</b> el lunes 29/06 — fue la que activó la ruptura, no la
+de mayor RSC del listado. Haz clic en un ticker para ver su gráfico semanal con WMA(30).
 </div>
 
 <table>
@@ -189,7 +188,7 @@ para ver su gráfico semanal con WMA(30).
 <section>
 <h2 class="section-title">Rentabilidad mensual del sistema (2020–2026)</h2>
 <div class="note">
-Rentabilidad del sistema <b>Fantastic 4</b> en real, mes a mes, hasta el <b>27/06/2026</b>. La columna
+Rentabilidad del sistema <b>Fantastic 4</b> en real, mes a mes, hasta el <b>29/06/2026</b>. La columna
 <b>Año %</b> es el retorno compuesto del año y la fila <b>Media</b> es la media histórica de cada mes.
 </div>
 <div class="mtable-wrap">
@@ -254,10 +253,10 @@ Generado automáticamente cada sábado a partir de AmiBroker · Fantastic 4 · M
 <script>
 // ---- Cartera actual (posiciones abiertas, vía Backtest) ----
 const PORTFOLIO = [
-{t:"GLW",  entry:"17/04/2026", pEntry:169.65, pNow:221.05, pct:30.30, sell:false},
-{t:"TER",  entry:"17/04/2026", pEntry:365.94, pNow:436.86, pct:19.38, sell:false},
-{t:"GNRC", entry:"08/05/2026", pEntry:259.91, pNow:278.62, pct:7.20,  sell:false},
-{t:"AKAM", entry:"15/05/2026", pEntry:149.00, pNow:113.29, pct:-23.97, sell:true},
+{t:"GLW",  entry:"17/04/2026", pEntry:169.65, pNow:249.635, pct:47.15, sell:false},
+{t:"TER",  entry:"17/04/2026", pEntry:365.94, pNow:465.29, pct:27.15, sell:false},
+{t:"GNRC", entry:"08/05/2026", pEntry:259.91, pNow:281.76, pct:8.41,  sell:false},
+{t:"OKTA", entry:"29/06/2026", pEntry:126.74, pNow:130.62, pct:3.06,  sell:false},
 ];
 
 const portfolioBody = document.getElementById('portfolioBody');
@@ -294,7 +293,7 @@ const DATA = [
 
 const tbody = document.getElementById('tbody');
 const MAXDIST = 33;          // dismax(38) - 5: distancia máxima a la media para señal de compra
-const ENTRANT = "WDC";        // cubre el hueco que deja AKAM
+const ENTRANT = "";           // sin entrante destacado (la compra real fue OKTA, vía ruptura del ratio)
 const HELD = ["GLW","TER"];   // ya en cartera
 DATA.forEach((r) => {
 const tr = document.createElement('tr');
@@ -329,9 +328,9 @@ const MONTHLY = [
 {y:"2023", m:[2.4,1.9,-4.0,0.3,24.9,13.9,5.8,5.8,-1.7,-2.5,7.7,11.7], yr:84.3},
 {y:"2024", m:[0.5,15.1,27.6,2.5,-0.3,1.8,-4.2,6.8,10.8,13.6,20.1,-6.4], yr:122.0},
 {y:"2025", m:[2.6,-4.9,-6.8,0.0,4.1,3.6,4.1,0.7,4.9,4.0,-6.4,0.8], yr:5.8},
-{y:"2026", m:[-4.0,5.3,-7.6,13.4,12.3,2.0,null,null,null,null,null,null], yr:21.2},
+{y:"2026", m:[-4.0,5.3,-7.6,13.4,12.3,8.3,null,null,null,null,null,null], yr:28.7},
 ];
-const AVG = [2.0,4.9,2.5,3.4,6.3,4.3,4.7,6.4,2.3,3.1,8.1,3.3];
+const AVG = [2.0,4.9,2.5,3.4,6.3,5.2,4.7,6.4,2.3,3.1,8.1,3.3];
 
 const monthlyBody = document.getElementById('monthlyBody');
 function cellPct(v){
