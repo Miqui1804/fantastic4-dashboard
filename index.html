@@ -131,7 +131,7 @@ background:none; border:none; color:var(--muted); font-size:20px; cursor:pointer
 <h1>Fantastic 4</h1>
 <div class="sub">Señales semanales</div>
 </div>
-<div class="updated" id="updatedAt">Actualizado: 29/06/2026</div>
+<div class="updated" id="updatedAt">Actualizado: 30/06/2026</div>
 </header>
 
 <main>
@@ -139,7 +139,7 @@ background:none; border:none; color:var(--muted); font-size:20px; cursor:pointer
 <section>
 <h2 class="section-title">Cartera actual (posiciones abiertas)</h2>
 <div class="note">
-Resultado del <b>Backtest</b> de AmiBroker sobre <b>Fantastic 4</b> (01/01/2020 → última sesión, 29/06/2026).
+Resultado del <b>Backtest</b> de AmiBroker sobre <b>Fantastic 4</b> (01/01/2020 → última sesión, 30/06/2026).
 El sistema mantiene <b>4</b> posiciones simultáneas. <b>AKAM</b> se vendió el <b>lunes 29/06 en apertura</b> y el
 sistema cubrió el hueco con <b>OKTA</b>, que fue la que activó señal de compra (ruptura del ratio). Las cuatro
 posiciones se mantienen, sin señales de venta activas: <b>cartera completa 4/4</b>.
@@ -188,7 +188,7 @@ de mayor RSC del listado. Haz clic en un ticker para ver su gráfico semanal con
 <section>
 <h2 class="section-title">Rentabilidad mensual del sistema (2020–2026)</h2>
 <div class="note">
-Rentabilidad del sistema <b>Fantastic 4</b> en real, mes a mes, hasta el <b>29/06/2026</b>. La columna
+Rentabilidad del sistema <b>Fantastic 4</b> en real, mes a mes, hasta el <b>30/06/2026</b>. La columna
 <b>Año %</b> es el retorno compuesto del año y la fila <b>Media</b> es la media histórica de cada mes.
 </div>
 <div class="mtable-wrap">
@@ -253,10 +253,10 @@ Generado automáticamente cada sábado a partir de AmiBroker · Fantastic 4 · M
 <script>
 // ---- Cartera actual (posiciones abiertas, vía Backtest) ----
 const PORTFOLIO = [
-{t:"GLW",  entry:"17/04/2026", pEntry:169.65, pNow:249.635, pct:47.15, sell:false},
-{t:"TER",  entry:"17/04/2026", pEntry:365.94, pNow:465.29, pct:27.15, sell:false},
-{t:"GNRC", entry:"08/05/2026", pEntry:259.91, pNow:281.76, pct:8.41,  sell:false},
-{t:"OKTA", entry:"29/06/2026", pEntry:126.74, pNow:130.62, pct:3.06,  sell:false},
+{t:"GLW",  entry:"17/04/2026", pEntry:169.65, pNow:255.43, pct:50.56, sell:false},
+{t:"TER",  entry:"17/04/2026", pEntry:365.94, pNow:483.98, pct:32.26, sell:false},
+{t:"GNRC", entry:"08/05/2026", pEntry:259.91, pNow:292.81, pct:12.66, sell:false},
+{t:"OKTA", entry:"29/06/2026", pEntry:126.74, pNow:136.45, pct:7.66,  sell:false},
 ];
 
 const portfolioBody = document.getElementById('portfolioBody');
@@ -328,9 +328,9 @@ const MONTHLY = [
 {y:"2023", m:[2.4,1.9,-4.0,0.3,24.9,13.9,5.8,5.8,-1.7,-2.5,7.7,11.7], yr:84.3},
 {y:"2024", m:[0.5,15.1,27.6,2.5,-0.3,1.8,-4.2,6.8,10.8,13.6,20.1,-6.4], yr:122.0},
 {y:"2025", m:[2.6,-4.9,-6.8,0.0,4.1,3.6,4.1,0.7,4.9,4.0,-6.4,0.8], yr:5.8},
-{y:"2026", m:[-4.0,5.3,-7.6,13.4,12.3,8.3,null,null,null,null,null,null], yr:28.7},
+{y:"2026", m:[-4.0,5.3,-7.6,13.4,12.3,12.1,null,null,null,null,null,null], yr:33.2},
 ];
-const AVG = [2.0,4.9,2.5,3.4,6.3,5.2,4.7,6.4,2.3,3.1,8.1,3.3];
+const AVG = [2.0,4.9,2.5,3.4,6.3,5.7,4.7,6.4,2.3,3.1,8.1,3.3];
 
 const monthlyBody = document.getElementById('monthlyBody');
 function cellPct(v){
